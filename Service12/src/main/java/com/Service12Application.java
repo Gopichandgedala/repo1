@@ -16,7 +16,7 @@ public class Service12Application {
 	}
 	
 	@Bean
-	@LoadBalanced
+	//@LoadBalanced
 	public RestTemplate restT()
 	{
 		return new RestTemplate();

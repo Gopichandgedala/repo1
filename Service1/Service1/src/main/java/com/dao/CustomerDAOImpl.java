@@ -3,7 +3,6 @@ package com.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -14,23 +13,10 @@ import com.model.CustomerVO;
 
 @Repository
 public class CustomerDAOImpl implements CustomerDAO {
-	/*final String INSERT_QUERY = "insert into test.customer (name, address,mobile,age) values (?,?,?,?)";
+	final String INSERT_QUERY = "insert into test.customer (name, address,mobile,age) values (?,?,?,?)";
 	final String GET_ALL="select* from test.customer";
 	final String UPDATE_CUST="update test.customer set name=? where id=?";
 	final String delete_CUST="delete from test.customer  where id=?";
-	*/
-	
-	@Value("${INSERT_QUERY}")
-    private String INSERT_QUERY;
-	
-	@Value("${GET_ALL}")
-	private String GET_ALL;
-	
-	@Value("${UPDATE_CUST}")
-	private String UPDATE_CUST;
-	
-	@Value("${DELETE_CUST}")
-	private String delete_CUST;
 	
 	@Autowired
    private JdbcTemplate jdbctemplate1;
