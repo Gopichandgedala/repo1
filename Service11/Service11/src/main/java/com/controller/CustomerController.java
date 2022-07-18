@@ -1,10 +1,16 @@
 package com.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.errors.ApiError;
+import com.exception.handler.CustomerException;
+import com.google.inject.internal.Errors;
 import com.model.Customer;
 import com.model.CustomerVO;
 import com.service.CustomerService;
@@ -35,26 +44,27 @@ public class CustomerController {
 	
 	
 	@PutMapping("/updateCustomer")
-	public @ResponseBody String updateCustomer(@RequestParam int id,@RequestParam String name)
+	public @ResponseBody ResponseEntity<String> updateCustomer(@RequestParam int id,@RequestParam String name)
 	{
 		customerservice.updateCustomer(id,name);
 		
 		
 		
 		
-		return "Succsss update "+id;
+		//return "Succsss update "+id;
 		
-	
+		return new ResponseEntity<String>("Successfully updated "+id, HttpStatus.OK);
+		
 		
 	}
 	
 	
-	@GetMapping("/getCustomer")
-	public @ResponseBody List<Customer> getCustomer()
+	@GetMapping(value ="/getCustomer",consumes = "application/json", produces = "application/json")
+	public @ResponseBody ResponseEntity<Map> getCustomer()
 	{
 		
 		
-		return customerservice.getAllCustomers();
+		return new ResponseEntity<Map>(customerservice.getAllCustomers(),HttpStatus.OK);
 		
 	
 		
@@ -62,26 +72,38 @@ public class CustomerController {
 	
 	
 	@PostMapping(value="/addCustomer", consumes = "application/json", produces = "application/json")
-	public @ResponseBody String addCustomer(@Valid @RequestBody CustomerVO cvo)
+	public @ResponseBody ResponseEntity addCustomer(@Valid @RequestBody CustomerVO cvo,BindingResult bindingResult)
 	{
 		
 		
+		
+		
+		if(bindingResult.hasErrors())
+		{
+			ApiError error=new ApiError(400,HttpStatus.BAD_REQUEST,bindingResult.getFieldError().getDefaultMessage(),"/serv1/addCustomer");
+			
+	          
+			throw new CustomerException(bindingResult.getFieldError().getDefaultMessage());
+			
+			//return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
+		}
+		
 		customerservice.addCustomer(cvo);
+		return new ResponseEntity<String>("Successfully Added", HttpStatus.OK);
 		
 		
-		return "Success added";
 		
 	}
 	
 	@DeleteMapping(value="/deleteCustomer")
-	public @ResponseBody String deleteCustomer(@RequestParam int id)
+	public @ResponseBody ResponseEntity<String> deleteCustomer(@RequestParam int id)
 	{
 		
 		
 		customerservice.deleteCustomer(id);
 		
 		
-		return "Success deleted";
+		return new ResponseEntity<String>("Successfully Deleted", HttpStatus.OK);
 		
 	}
 	

@@ -2,10 +2,12 @@ package com.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 
-public class CustomerRowMapper implements RowMapper<Customer>{
+final class CustomerRowMapper implements RowMapper<Customer>{
 	  @Override
 	  public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
 	    Customer user = new Customer();

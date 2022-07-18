@@ -1,0 +1,109 @@
+package com.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.errors.ApiError;
+import com.google.inject.internal.Errors;
+import com.model.Customer;
+import com.model.CustomerVO;
+import com.service.CustomerService;
+
+@RestController
+@RequestMapping("serv1")
+public class CustomerController {
+	
+	CustomerController()
+	{
+		System.out.println("default const....................................");
+	}
+	
+	@Autowired
+	private CustomerService customerservice;
+	
+	
+	
+	@PutMapping("/updateCustomer")
+	public @ResponseBody String updateCustomer(@RequestParam int id,@RequestParam String name)
+	{
+		customerservice.updateCustomer(id,name);
+		
+		
+		
+		
+		return "Succsss update "+id;
+		
+	
+		
+	}
+	
+	
+	@GetMapping("/getCustomer")
+	public @ResponseBody Map<String, Object> getCustomer()
+	{
+		
+		
+		return customerservice.getAllCustomers();
+		
+	
+		
+	}
+	
+	
+	@PostMapping(value="/addCustomer", consumes = "application/json", produces = "application/json")
+	public @ResponseBody ResponseEntity addCustomer(@Valid @RequestBody CustomerVO cvo,BindingResult bindingResult)
+	{
+		
+		ApiError error=new ApiError(HttpStatus.BAD_REQUEST,bindingResult.getFieldError().toString(),"");
+		
+	
+		
+		if(bindingResult.hasErrors())
+		{
+			System.out.println("error  hapedn.........");
+			FieldError e=bindingResult.getFieldError();
+		
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		System.out.println("error not hapedn.........");
+		customerservice.addCustomer(cvo);
+		
+		
+	return new ResponseEntity<String>("Successfully Added", HttpStatus.BAD_REQUEST);
+		
+	}
+	
+	@DeleteMapping(value="/deleteCustomer")
+	public @ResponseBody String deleteCustomer(@RequestParam int id)
+	{
+		
+		
+		customerservice.deleteCustomer(id);
+		
+		
+		return "Success deleted";
+		
+	}
+	
+
+}

@@ -1,6 +1,7 @@
 package com.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.mappers.CustomerMapper;
 import com.model.Customer;
-import com.model.CustomerRowMapper;
+import com.model.CustomerExtractor;
+
 import com.model.CustomerVO;
 
 @Repository
@@ -42,10 +44,12 @@ public class CustomerDAOImpl implements CustomerDAO {
 	
 	
 	@Override
-	public List<Customer> getAllCust() {
-		return jdbctemplate1.query(GET_ALL,new CustomerRowMapper());
-		        
-		        
+	public Map<Long, Customer> getAllCust() {
+		//return jdbctemplate1.query(GET_ALL,new CustomerRowMapper());
+		
+		return  jdbctemplate1.query(GET_ALL, new CustomerExtractor());
+		//return  jdbctemplate1.queryForMap(GET_ALL);
+		       
 		
 		
 	}

@@ -1,0 +1,6 @@
+
+
+server.port=8086
+spring.application.name=ConfigServer
+spring.cloud.config.server.git.uri=https://github.com/Gopichandgedala/repo1/Propertyfiles/
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka

@@ -1,0 +1,6 @@
+package com.exception.handler;
+
+@ControllerAdvice
+public class AppExceptionHandler {
+
+}
