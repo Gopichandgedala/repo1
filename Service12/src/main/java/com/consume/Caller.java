@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -25,85 +27,90 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.model.Customer;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+//import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+//import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 @RestController
 @RequestMapping("serv2")
 public class Caller {
 
-	Caller()
-	{
+	Caller() {
 		System.out.println("caller const------------------------------");
 	}
-	
-	
+
 	@Autowired
 	private RestTemplate restt;
-	@GetMapping(value="/getCustomerCaller1",produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<Long,Customer> getCustomer1()
-	{
 
-	 Map m=new HashMap();
-	 Customer c=new Customer();
-	 c.setId(1);
-	 c.setName("gg");
-	 c.setAddress("gdv");
-	 c.setAge(20);
-		
-	 Customer c1=new Customer();
-	 c1.setId(2);
-	 c1.setName("gg");
-	 c1.setAddress("gdv");
-	 c1.setAge(20);
-	 
-	 m.put(1, c);
-	 m.put(2,c1);
-	 
-		
-	      
-	 return m;
+	@GetMapping(value = "/getCustomerCaller1", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<Long, Customer> getCustomer1() {
+
+		Map m = new HashMap();
+		Customer c = new Customer();
+		c.setId(1);
+		c.setName("gg");
+		c.setAddress("gdv");
+		c.setAge(20);
+
+		Customer c1 = new Customer();
+		c1.setId(2);
+		c1.setName("gg");
+		c1.setAddress("gdv");
+		c1.setAge(20);
+
+		m.put(1, c);
+		m.put(2, c1);
+
+		return m;
 	}
 
- @GetMapping("/getCustomerCaller")
- public @ResponseBody String getCustomer(@RequestParam String id) throws JsonMappingException, JsonProcessingException
-	{
-	System.out.println("call getcustomer caller-------------------------------");
-	
-	
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.APPLICATION_JSON);
-	headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-	headers.set("X-Request-Source", "Desktop");
-
-	HttpEntity request = new HttpEntity(headers);
-	
-	
-	ResponseEntity<Map> result = restt.exchange(
-			"http://localhost:8087/serv1/getCustomer",
-	        HttpMethod.GET,
-	        request,
-	        Map.class,
-	        1
-	);
+	/*@HystrixCommand(fallbackMethod="getFallbackGetCustomer",
+	commandProperties= {
+			@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="2000"),
+			@HystrixProperty(name="circuitBreaker.requestVolumeThreshold",value="6"),
+			@HystrixProperty(name="circuitBreaker.errorThresholdPercentage",value="50"),
+			@HystrixProperty(name="circuitBreaker.sleepWindowInMilliseconds",value="5000")
+			
+	} 
+    )*/
+	@GetMapping( "/getCustomerCaller")
+	@CircuitBreaker(name="fallbackForgetCustomer",fallbackMethod="getFallbackGetCustomer")
+	public ResponseEntity<Object> getCustomer(@RequestParam String id) throws JSONException, InterruptedException {
 
 	
-	
-	//String result = restt.getForObject("http://localhost:8084/serv1/getCustomer",String.class);
-   // System.out.println(result);
-	        // Map m=result.getBody();
-               Object m= result.getBody().get(id);
-               
-               if(m==null)
-               {
-            	  return "no object found"; 
-               }
-               
-	
-	return m.toString();
-		
+				  
+		  
+		  Map<String,Customer> result = restt.getForObject("http://localhost:8087/serv1/getCustomer",Map.class);
+
+		  JSONObject jsonObject = new JSONObject(result);
+		  
+		  JSONObject classJsonObj = jsonObject.optJSONObject(id);
+		  if(classJsonObj==null) {
+		  return new ResponseEntity<Object>("{\"msg\":\"no data found\"}",HttpStatus.OK);
+		  }
+		  
+		  return new ResponseEntity<Object>(classJsonObj.toString(),HttpStatus.OK);
+		  
+		 
 	}
-	
-	
-	
+
+	public ResponseEntity<Map> getFallbackGetCustomer(@RequestParam String id,RuntimeException e) throws JSONException {
+
+		Customer c = new Customer();
+		c.setId(0);
+		c.setName("none");
+		c.setAddress("none");
+		c.setAge(-1);
+		c.setMobile("none");
+		HashMap m=new HashMap();
+		 m.put("msg","Requested Server is down, please try after some time");
+		
+           
+		return new ResponseEntity<Map>(m, HttpStatus.SERVICE_UNAVAILABLE);
+
+	}
+
 }

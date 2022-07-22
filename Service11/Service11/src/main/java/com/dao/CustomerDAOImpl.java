@@ -44,7 +44,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	
 	
 	@Override
-	public Map<Long, Customer> getAllCust() {
+	public Map getAllCust() {
 		//return jdbctemplate1.query(GET_ALL,new CustomerRowMapper());
 		
 		return  jdbctemplate1.query(GET_ALL, new CustomerExtractor());

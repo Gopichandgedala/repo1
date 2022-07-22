@@ -33,11 +33,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.controller.CustomerController;
 import com.model.Customer;
 import com.service.CustomerService;
+import com.util.Utility;
 
 @RunWith(SpringRunner.class)
 //@ExtendWith(SpringExtension.class)
@@ -103,7 +105,7 @@ public class CustomerControllerTest {
 
 				 
 	  Mockito.when(customerService.getAllCustomers()).thenReturn(mp);
-		 RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/serv1/getCustomer") .contentType(MediaType.APPLICATION_JSON);
+		 RequestBuilder requestBuilder = MockMvcRequestBuilders.get(Utility.ADD_CUSTOMER_PATH) .contentType(MediaType.APPLICATION_JSON);
 	          
 	    String given="{\"1\":{\"id\":1,\"name\":\"gopi\",\"address\":\"gdv\",\"mobile\":\"121\",\"age\":3},\"2\":{\"id\":2,\"name\":\"gopi\",\"address\":\"gdv\",\"mobile\":\"121\",\"age\":3},\"3\":{\"id\":3,\"name\":\"gopi\",\"address\":\"gdv\",\"mobile\":\"121\",\"age\":3},\"4\":{\"id\":4,\"name\":\"gopi\",\"address\":\"gdv\",\"mobile\":\"121\",\"age\":3}}";
 		 
@@ -129,21 +131,20 @@ public class CustomerControllerTest {
 		 
 			 
 		  try {
-
-				 
+			   
 	Mockito.when(customerService.updateCustomer(Mockito.anyInt(),Mockito.anyString())).thenReturn(true);
-		 RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/serv1/updateCustomer").param("id","193").param("name","gopiii").contentType(MediaType.TEXT_PLAIN_VALUE);
+		 RequestBuilder requestBuilder = MockMvcRequestBuilders.put(Utility.UPDATE_CUSTOMER_PATH).param("cid","193").param("cname", "gopy"); //.contentType(MediaType.TEXT_PLAIN);
 	          
-	    String given="Successfully updated 193";
-		 
+	    
 		 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         System.out.println("result update...................................");
-		 System.out.println(result.getResponse().getContentAsString());
+        
+		 System.out.println(result.getResponse().getContentAsString().toString());
 		 
 		 
-		 System.out.println("result update ended...................................1");
+		 System.out.println("result update ended...................................1w");
 		 
-		//JSONAssert.assertEquals("",given,false);
+		JSONAssert.assertEquals(result.getResponse().getContentAsString().toString(),Utility.UPDATE_CUSTOMERE_RESPONSE_MSG,false);
 		 
 		 
 		  }

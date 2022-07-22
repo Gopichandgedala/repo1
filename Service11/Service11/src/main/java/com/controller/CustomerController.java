@@ -1,5 +1,6 @@
 package com.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,23 +45,24 @@ public class CustomerController {
 	
 	
 	@PutMapping("/updateCustomer")
-	public @ResponseBody ResponseEntity<String> updateCustomer(@RequestParam int id,@RequestParam String name)
+	public @ResponseBody ResponseEntity<Map> updateCustomer(@RequestParam("cid") int id,@RequestParam("cname") String name)
 	{
 		customerservice.updateCustomer(id,name);
 		
+		HashMap hm=new HashMap();
+		hm.put("msg","Successfully Updated "+id);
 		
 		
 		
-		//return "Succsss update "+id;
 		
-		return new ResponseEntity<String>("Successfully updated "+id, HttpStatus.OK);
+		return new ResponseEntity<Map>(hm, HttpStatus.OK);
 		
 		
 	}
 	
 	
-	@GetMapping(value ="/getCustomer",consumes = "application/json", produces = "application/json")
-	public @ResponseBody ResponseEntity<Map> getCustomer()
+	@GetMapping(value ="/getCustomer")
+	public ResponseEntity<Map> getCustomer()
 	{
 		
 		
@@ -85,7 +87,6 @@ public class CustomerController {
 	          
 			throw new CustomerException(bindingResult.getFieldError().getDefaultMessage());
 			
-			//return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
 		}
 		
 		customerservice.addCustomer(cvo);

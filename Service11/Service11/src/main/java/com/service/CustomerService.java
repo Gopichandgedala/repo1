@@ -10,7 +10,7 @@ import com.model.CustomerVO;
 
 public interface CustomerService {
 
-	public Map<Long, Customer> getAllCustomers();
+	public Map getAllCustomers();
 	public boolean addCustomer(CustomerVO cvo);
 	public boolean deleteCustomer(int id);
 	public boolean updateCustomer(int id,String name);

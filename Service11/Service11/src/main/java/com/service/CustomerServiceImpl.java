@@ -21,7 +21,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private CustomerMapper customermapper;
 	
 	@Override
-	public Map<Long, Customer> getAllCustomers() {
+	public Map getAllCustomers() {
 		// TODO Auto-generated method stub
 		
 		return customerdao.getAllCust();

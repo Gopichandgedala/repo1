@@ -3,20 +3,22 @@ package com.model;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-public class CustomerExtractor implements ResultSetExtractor<Map<Long, Customer>>,Serializable{
+public class CustomerExtractor implements ResultSetExtractor<Map>,Serializable{
 
 	@Override
 	public Map<Long, Customer> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		// TODO Auto-generated method stub
 		
 		
-		Map<Long, Customer> customerMap = new HashMap<Long, Customer>();
+		Map customerMap = new HashMap();
 
 		while (rs.next()) {
 			
@@ -30,7 +32,7 @@ public class CustomerExtractor implements ResultSetExtractor<Map<Long, Customer>
 			   
 			
 			
-			customerMap.put(user.getId(), user);
+			customerMap.put(user.getId()+"", user);
 		        }
 		        return customerMap;
 		

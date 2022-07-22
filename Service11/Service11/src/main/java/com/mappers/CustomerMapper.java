@@ -11,7 +11,6 @@ public interface CustomerMapper {
 
 	
 	public Customer customerVoToCustomer(CustomerVO cvo);
-	
 	public CustomerVO customerToCustomerVo(Customer c);
 	
 }
