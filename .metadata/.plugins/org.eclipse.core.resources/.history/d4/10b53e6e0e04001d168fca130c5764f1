@@ -1,4 +1,0 @@
-package com.listener;
-public class JobListener implements JobExecutionListener {
-
-}
