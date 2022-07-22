@@ -1,5 +1,0 @@
-package com.exception.handler;
-
-public class AppExceptionHandler {
-
-}

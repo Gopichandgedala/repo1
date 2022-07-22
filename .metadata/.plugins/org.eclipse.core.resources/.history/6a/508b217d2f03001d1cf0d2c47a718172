@@ -1,7 +1,0 @@
-package com.model;
-
-import org.springframework.jdbc.core.ResultSetExtractor;
-
-public class CustomerExtractor  implements ResultSetExtractor<Map<Long, Customer>>{
-
-}
